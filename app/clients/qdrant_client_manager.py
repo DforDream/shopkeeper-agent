@@ -1,5 +1,5 @@
 import asyncio
-import random
+# import random
 from typing import Optional
 from qdrant_client import AsyncQdrantClient, models
 from app.conf.app_config import QdrantConfig, app_config
