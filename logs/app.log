@@ -1,0 +1,8 @@
+2026-09-09 15:21:27.702 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:261 - 保存表信息和字段信息到 Meta MySQL
+2026-09-09 15:35:17.350 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:261 - 保存表信息和字段信息到 Meta MySQL
+2026-09-09 15:39:07.531 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:261 - 保存表信息和字段信息到 Meta MySQL
+2026-09-09 15:54:13.212 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:261 - 保存表信息和字段信息到 Meta MySQL
+2026-09-09 15:54:28.390 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:264 - 为字段信息建立向量索引
+2026-09-09 15:54:29.068 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:267 - 为字段取值建立全文索引
+2026-09-09 15:54:29.094 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:273 - 保存指标信息到数据库成功
+2026-09-09 15:54:31.068 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:277 - 为指标信息建立向量索引成功
