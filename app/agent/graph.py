@@ -21,7 +21,11 @@ from app.agent.state import DataAgentState
 from app.clients.embedding_client_manager import embedding_client_manager
 from app.clients.es_client_manager import es_client_manager
 from app.clients.qdrant_client_manager import qdrant_client_manager
+from app.clients.mysql_client_manager import (
+    meta_mysql_client_manager,
+)
 from app.repositories.es.value_es_repository import ValueESRepository
+from app.repositories.mysql.meta.meta_mysql_repository import MetaMySQLRepository
 from app.repositories.qdrant.column_qdrant_repository import ColumnQdrantRepository
 from app.repositories.qdrant.metric_qdrant_repository import MetricQdrantRepository
 
@@ -89,7 +93,12 @@ if __name__ == "__main__":
         qdrant_client_manager.init()
         embedding_client_manager.init()
         es_client_manager.init()
+        meta_mysql_client_manager.init()
         # 字段和指标分别使用不同 Qdrant collection，取值检索使用 ES index
+        async with (
+            meta_mysql_client_manager.session_factory() as meta_session,
+        ):
+            meta_mysql_repository = MetaMySQLRepository(meta_session)
         column_qdrant_repository = ColumnQdrantRepository(qdrant_client_manager.client)
         metric_qdrant_repository = MetricQdrantRepository(qdrant_client_manager.client)
         value_es_repository = ValueESRepository(es_client_manager.client)
@@ -101,6 +110,7 @@ if __name__ == "__main__":
             embedding_client=embedding_client_manager.client,
             metric_qdrant_repository=metric_qdrant_repository,
             value_es_repository=value_es_repository,
+            meta_mysql_repository=meta_mysql_repository,
         )
 
         # stream_mode="custom" 会接收各节点通过 runtime.stream_writer 写出的进度信息
@@ -112,5 +122,6 @@ if __name__ == "__main__":
         # 关闭显式创建的异步客户端，避免本地调试时连接资源悬挂
         await qdrant_client_manager.close()
         await es_client_manager.close()
+        await meta_mysql_client_manager.close()
 
     asyncio.run(test())
