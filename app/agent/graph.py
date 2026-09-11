@@ -18,6 +18,15 @@ from app.agent.nodes.run_sql import run_sql
 from app.agent.nodes.validate_sql import validate_sql
 from app.agent.state import DataAgentState
 
+from app.clients.embedding_client_manager import embedding_client_manager
+from app.clients.es_client_manager import es_client_manager
+from app.clients.qdrant_client_manager import qdrant_client_manager
+from app.repositories.es.value_es_repository import ValueESRepository
+from app.repositories.qdrant.column_qdrant_repository import ColumnQdrantRepository
+from app.repositories.qdrant.metric_qdrant_repository import MetricQdrantRepository
+
+
+
 # StateGraph 声明整张图使用的状态结构和运行时上下文结构
 graph_builder = StateGraph(state_schema=DataAgentState, context_schema=DataAgentContext)
 
@@ -70,17 +79,38 @@ graph_builder.add_edge("run_sql", END)
 # 编译后的 graph 是对外使用的 Agent 执行入口
 graph = graph_builder.compile()
 
-print(graph.get_graph().draw_mermaid())
+# print(graph.get_graph().draw_mermaid())
 
 if __name__ == "__main__":
 
     async def test():
         """本地调试图结构和节点流式输出"""
-        state = DataAgentState()
-        context = DataAgentContext()
+         # 多路召回会同时访问 Qdrant、Embedding 和 Elasticsearch，所以测试入口先初始化依赖
+        qdrant_client_manager.init()
+        embedding_client_manager.init()
+        es_client_manager.init()
+        # 字段和指标分别使用不同 Qdrant collection，取值检索使用 ES index
+        column_qdrant_repository = ColumnQdrantRepository(qdrant_client_manager.client)
+        metric_qdrant_repository = MetricQdrantRepository(qdrant_client_manager.client)
+        value_es_repository = ValueESRepository(es_client_manager.client)
+
+        # 当前只需要传入原始问题，后续节点会逐步把 keywords 和三类召回结果写回 state
+        state = DataAgentState(query="统计华北地区的销售总额")
+        context = DataAgentContext(
+            column_qdrant_repository=column_qdrant_repository,
+            embedding_client=embedding_client_manager.client,
+            metric_qdrant_repository=metric_qdrant_repository,
+            value_es_repository=value_es_repository,
+        )
+
+        # stream_mode="custom" 会接收各节点通过 runtime.stream_writer 写出的进度信息
         async for chunk in graph.astream(
             input=state, context=context, stream_mode="custom"
         ):
             print(chunk)
+
+        # 关闭显式创建的异步客户端，避免本地调试时连接资源悬挂
+        await qdrant_client_manager.close()
+        await es_client_manager.close()
 
     asyncio.run(test())

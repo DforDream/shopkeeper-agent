@@ -6,3 +6,8 @@
 2026-09-09 15:54:29.068 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:267 - 为字段取值建立全文索引
 2026-09-09 15:54:29.094 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:273 - 保存指标信息到数据库成功
 2026-09-09 15:54:31.068 | INFO     | request_id - 1 | app.services.meta_knowledge_service:build:277 - 为指标信息建立向量索引成功
+2026-09-11 09:18:37.761 | INFO     | request_id - 1 | app.agent.nodes.extract_keywords:extract_keywords:39 - 抽取关键词: ['华北地区', '统计', '统计华北地区的销售总额', '销售总额']
+2026-09-11 10:03:46.606 | INFO     | request_id - 1 | app.agent.nodes.extract_keywords:extract_keywords:39 - 抽取关键词: ['华北地区', '销售总额', '统计华北地区的销售总额', '统计']
+2026-09-11 10:03:48.306 | INFO     | request_id - 1 | app.agent.nodes.recall_value:recall_value:46 - 检索到字段取值：['dim_region.region_name.华北']
+2026-09-11 10:03:54.334 | INFO     | request_id - 1 | app.agent.nodes.recall_column:recall_column:56 - 检索到字段信息：['fact_order.order_amount', 'fact_order.order_quantity', 'dim_region.region_name', 'dim_region.province']
+2026-09-11 10:03:54.768 | INFO     | request_id - 1 | app.agent.nodes.recall_metric:recall_metric:48 - 检索到指标信息：['GMV', 'AOV']

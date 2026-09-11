@@ -40,5 +40,5 @@ es:
 
 llm:
   model_name: gpt-5.5
-  api_key: sk-b552a2f6cb5f38373ee2e9c1caa54ed9a58aab8705c74d78085b4e81b918bf1f
-  base_url: http://192.168.110.126:8080
+  api_key: ${oc.env:LLM_API_KEY}
+  base_url: http://192.168.110.126:8080/v1

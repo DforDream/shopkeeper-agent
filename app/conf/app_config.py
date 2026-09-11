@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from dotenv import load_dotenv
 from omegaconf import OmegaConf
 
 # 文件日志配置，对应 logging.file 这一组参数
@@ -74,7 +75,11 @@ class AppConfig:
 
 # 从当前文件 app/conf/app_config.py 出发，回到项目根目录
 # 再定位到 conf/app_config.yaml 这个配置文件
-config_file = Path(__file__).parents[2] / 'conf' / 'app_config.yaml'
+project_root = Path(__file__).parents[2]
+config_file = project_root / 'conf' / 'app_config.yaml'
+
+# 先读取本地 .env，让 YAML 中的 ${oc.env:...} 可以解析到敏感配置
+load_dotenv(project_root / ".env")
 
 # 读取 YAML 配置内容
 context = OmegaConf.load(config_file)
